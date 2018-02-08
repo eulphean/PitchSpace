@@ -5,37 +5,57 @@ using namespace std;
 //--------------------------------------------------------------
 void ofApp::setup(){
     ofSetCircleResolution(60);
+    lastActivePitchIndex = -1; 
 
     // Diameter for each pitch dot.
     int circleRadius = ( ofGetWidth() / gridSize ) / 2;
 
-    int x = circleRadius;
-
+    int y = circleRadius;
+  
+    // Pitch index to recognize which Pitch got struck. 
+    int index = 0;
+  
     // Create the grid.
     for (int i = 0; i < gridSize; i++) {
-        int y = circleRadius;
+        int x = circleRadius;
 
         for (int j = 0; j < gridSize; j++) {
             PitchDot pitch;
-            ofPoint pitchPosition(x, y);
+            glm::vec2 pitchPosition(x, y);
             // Setup pitch.
-            pitch.setup(circleRadius, pitchPosition);
-
+            pitch.setup(circleRadius, pitchPosition, index);
             // Push the pitch in the vector.
             pitches.push_back(pitch);
 
-            // Increment y
-            y = y + circleRadius * 2;
+            // Increment x
+            x = x + circleRadius * 2;
+          
+            // Increment pitch index.
+            index++;
         }
 
-        // Increment x
-        x = x + circleRadius * 2;
+        // Increment y
+        y = y + circleRadius * 2;
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    // Hit test.
+    glm::vec2 mousePosition (ofGetMouseX(), ofGetMouseY());
+  
+    // Update logic for each pitch. 
+    for (auto pitch: pitches) {
+      if (pitch.isHitSuccessful(mousePosition)) {
+        int index = pitch.getPitchIndex();
+        
+        // Only play the note when the previous note played was different than the current
+        // note being played. 
+        if (lastActivePitchIndex != index) {
+          lastActivePitchIndex = index;
+          pitch.play();
+        }
+      }
+    }
 }
 
 //--------------------------------------------------------------
@@ -45,10 +65,3 @@ void ofApp::draw(){
       pitch.draw();
    }
 }
-
-
-// Pitch space
-// Each circle will trigger a note when I hover my mouse on top of it.
-// I need MIDI to send midi signals to ableton
-// Light up each circle on the grid as soon as the mouse hovers on it and that indicates
-// that a note is lit up.

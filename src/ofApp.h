@@ -17,4 +17,7 @@ public:
 
     // Dots laid out on the screen that are pitches.
     vector<PitchDot> pitches;
+  
+    // Last active pitch index that was played.
+    int lastActivePitchIndex; 
 };
