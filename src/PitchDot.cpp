@@ -1,4 +1,5 @@
 #include "PitchDot.h"
+#include "Midi.h"
 
 using namespace std;
 
@@ -9,7 +10,8 @@ void PitchDot::setup(int r, glm::vec2 pitchPosition, int index){
   color = ofColor::fromHsb(ofRandom(255), 255, 255);
   center = pitchPosition;
   pitchIndex = index;
-  pitchMidiNote = 10; 
+  // Default pitch midi node. This gets update once the pitch dot is created. 
+  pitchMidiNote = 48;
 }
 
 
@@ -42,6 +44,7 @@ int PitchDot::getPitchIndex() {
 
 void PitchDot::play() {
   cout << "Playing Pitch Index: " << pitchIndex << " Note: " << pitchMidiNote << endl;
+  Midi::instance().sendMidiNoteOn(pitchMidiNote);
 }
 
 void PitchDot::setMidiPitchNote(int noteNumber) {

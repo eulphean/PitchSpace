@@ -11,6 +11,9 @@ public:
     void setup();
     void update();
     void draw();
+  
+    // Setup midi pitch notes. 
+    void setupPitchDotsMidi();
 
     // We want to lay a 6x6 grid.
     const int gridSize = 6;
