@@ -15,7 +15,7 @@ void ofApp::setup(){
     // Pitch index to recognize which Pitch got struck. 
     int index = 0;
   
-    // Create the grid.
+    // Lay out the pitch dot space grid row by row. 
     for (int i = 0; i < gridSize; i++) {
         int x = circleRadius;
 
