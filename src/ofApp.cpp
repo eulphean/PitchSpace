@@ -5,11 +5,17 @@ using namespace std;
 
 //--------------------------------------------------------------
 void ofApp::setup(){
-    // Setup the midi connection.
-    Midi::instance().setup();
-    
+    // Setup the receiver to receive data on the port.
+    receive.setup(PORT);
+  
+    ofBackground(0);
     ofSetCircleResolution(60);
-    lastActivePitchIndex = -1; 
+  
+    // Setup the Midi connection with Ableton.
+    Midi::instance().setup();
+  
+    lastActiveMousePitchIndex = -1;
+    lastActiveOscPitchIndex = -1;
 
     // Diameter for each pitch dot.
     int circleRadius = ( ofGetWidth() / gridSize ) / 2;
@@ -48,29 +54,66 @@ void ofApp::setup(){
 
 //--------------------------------------------------------------
 void ofApp::update(){
-    glm::vec2 mousePosition (ofGetMouseX(), ofGetMouseY());
+    // Read the data on oscController.
+    while (receive.hasWaitingMessages()) {
+      ofxOscMessage m;
+      // Set the next message.
+      #pragma warning(disable: WARNING_CODE)
+      receive.getNextMessage(&m);
+      
+      // Parse the values from XY pad.
+      if (m.getAddress() == "/3/xy") {
+        float oscX = m.getArgAsFloat(0);
+        float oscY = m.getArgAsFloat(1);
+        mappedOsc.x = ofMap(oscX, 0, 1, 0, ofGetWidth());
+        mappedOsc.y = ofMap(oscY, 0, 1, 0, ofGetHeight());
+      }
+    }
+    mousePosition = glm::vec2(ofGetMouseX(), ofGetMouseY());
   
     // Update logic for each pitch. 
     for (auto& pitch: pitches) {
+      
+      // Check for Mouse hit.
       if (pitch.isHitSuccessful(mousePosition)) {
-        int index = pitch.getPitchIndex();
-        
+        int currentPitchIdx = pitch.getPitchIndex();
         // Only play the note when the previous note played was different than the current
         // note being played. 
-        if (lastActivePitchIndex != index) {
-          lastActivePitchIndex = index;
-          pitch.play();
+        if (lastActiveMousePitchIndex != currentPitchIdx) {
+          lastActiveMousePitchIndex = currentPitchIdx;
+          pitch.isActive = true;
+          pitch.play(mousePositionMidiChannel);
         }
+      } else if (pitch.isHitSuccessful(mappedOsc)) {
+        int currentPitchIdx = pitch.getPitchIndex();
+        // Only play the note when the previous note played was different than the current
+        // note being played.
+        if (lastActiveOscPitchIndex != currentPitchIdx) {
+          pitch.isActive = true;
+          lastActiveOscPitchIndex = currentPitchIdx;
+          pitch.play(oscPositionMidiChannel);
+        }
+      } else {
+        // It's not active. 
+        pitch.isActive = false;
       }
     }
 }
 
 //--------------------------------------------------------------
 void ofApp::draw(){
-    // Draw the pitches.
+   // Draw the pitches.
    for (PitchDot pitch: pitches) {
       pitch.draw();
    }
+  
+   // Draw small circles
+   ofPushStyle();
+    ofSetColor(ofColor::white);
+    ofDrawCircle(mappedOsc, 10);
+    ofDrawCircle(mousePosition, 10);
+   ofPopStyle();
+  
 }
 
 void ofApp::setupPitchDotsMidi() {

@@ -23,11 +23,11 @@ private:
   
     // Midi note for this pitch. 
     int pitchMidiNote;
-  
-    // Indicates if the dot is active. 
-    bool isActive;
 
 public:
+    // The only public variable that can be set from outside world.
+    bool isActive;
+  
     void setup(int radius, glm::vec2 pitchPosition, int index);
     void update();
     void draw();
@@ -36,10 +36,10 @@ public:
     int getPitchIndex();
   
     // Test if a coordinate is hitting a circle.
-    bool isHitSuccessful(glm::vec2 mousePosition);
+    bool isHitSuccessful(glm::vec2 position);
   
     // Send the midi note to Ableton to play the note associated with this pitch. 
-    void play();
+    void play(int midiChannel);
   
     // We will externally set the Midi note number for each pitch dot when the application initializes.
     // This will be assigned based on pitch space concept. 

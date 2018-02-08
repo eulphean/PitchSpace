@@ -34,14 +34,13 @@ void PitchDot::draw(){
   ofPopStyle();
 }
 
-bool PitchDot::isHitSuccessful(glm::vec2 mousePosition) {
+bool PitchDot::isHitSuccessful(glm::vec2 position) {
   // Calculate distance from the center to the mouse.
-  float distance = glm::distance(mousePosition, center);
-  if (distance <= radius) {
-    isActive = true;
+  float mouseDistance = glm::distance(position, center);
+  
+  if (mouseDistance <= radius) {
     return true;
   } else {
-    isActive = false;
     return false;
   }
 }
@@ -50,9 +49,10 @@ int PitchDot::getPitchIndex() {
   return pitchIndex;
 }
 
-void PitchDot::play() {
+// Play a midi note on channel. 
+void PitchDot::play(int midiChannel) {
   cout << "Playing Pitch Index: " << pitchIndex << " Note: " << pitchMidiNote << endl;
-  Midi::instance().sendMidiNoteOn(pitchMidiNote);
+  Midi::instance().sendMidiNoteOnChannel(midiChannel, pitchMidiNote);
 }
 
 void PitchDot::setMidiPitchNote(int noteNumber) {

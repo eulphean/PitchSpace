@@ -9,9 +9,8 @@ class Midi {
   public:
     void setup();
     void exit();
-    void sendMidiControlChangeRotary(int device, float val);
-    void sendMidiControlChangeDishes(int device, int midiVal);
     void sendMidiNoteOn(int midiNote);
+    void sendMidiNoteOnChannel(int channel, int midiNote);
     void sendMidiNoteOff(int midiNote);
     
     static Midi &instance();
@@ -19,5 +18,5 @@ class Midi {
   private:
     ofxMidiOut midiOut;
     static Midi m;
-    int channelMidiNote, channelControlChangeDishes, channelControlChangeRotary;
+    int defaultChannel;
 };
