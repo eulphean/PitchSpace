@@ -12,6 +12,7 @@ void PitchDot::setup(int r, glm::vec2 pitchPosition, int index){
   pitchIndex = index;
   // Default pitch midi node. This gets update once the pitch dot is created. 
   pitchMidiNote = 48;
+  isActive = false;
 }
 
 
@@ -23,7 +24,12 @@ void PitchDot::update(){
 //--------------------------------------------------------------
 void PitchDot::draw(){
   ofPushStyle();
-    ofSetColor(color);
+    // Change the color when dot is active. 
+    if (isActive) {
+      ofSetColor(ofColor::black);
+    } else {
+      ofSetColor(color);
+    }
     ofDrawCircle(center, radius);
   ofPopStyle();
 }
@@ -32,10 +38,12 @@ bool PitchDot::isHitSuccessful(glm::vec2 mousePosition) {
   // Calculate distance from the center to the mouse.
   float distance = glm::distance(mousePosition, center);
   if (distance <= radius) {
+    isActive = true;
     return true;
+  } else {
+    isActive = false;
+    return false;
   }
-  
-  return false;
 }
 
 int PitchDot::getPitchIndex() {

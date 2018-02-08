@@ -23,6 +23,9 @@ private:
   
     // Midi note for this pitch. 
     int pitchMidiNote;
+  
+    // Indicates if the dot is active. 
+    bool isActive;
 
 public:
     void setup(int radius, glm::vec2 pitchPosition, int index);

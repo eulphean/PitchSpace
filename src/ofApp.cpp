@@ -51,7 +51,7 @@ void ofApp::update(){
     glm::vec2 mousePosition (ofGetMouseX(), ofGetMouseY());
   
     // Update logic for each pitch. 
-    for (auto pitch: pitches) {
+    for (auto& pitch: pitches) {
       if (pitch.isHitSuccessful(mousePosition)) {
         int index = pitch.getPitchIndex();
         
